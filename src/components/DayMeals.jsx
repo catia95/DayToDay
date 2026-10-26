@@ -1,5 +1,5 @@
 import MealPicker from './MealPicker.jsx'
-import { defaultIdea, leftoversFor } from '../lib/mealPlan.js'
+import { breakfastOn, leftoversFor, names, snackOn } from '../lib/mealPlan.js'
 import { isWeekend, isoDate } from '../lib/dates.js'
 
 // Lunch, breakfast and snack pickers for one day. Shared by Today and Week.
@@ -26,21 +26,22 @@ export default function DayMeals({ menu, plans, picks, setPick, date }) {
           onChange={set('lunch')}
           groups={lunchGroups}
           placeholder={leftovers ? `Leftover ${leftovers}` : 'Pick a lunch…'}
+          skippable
         />
       </MealRow>
       {/* No placeholder here: until you pick, the value is that day's default idea. */}
       <MealRow label="Breakfast">
         <MealPicker
-          value={day.breakfast ?? defaultIdea(menu.breakfasts, date)}
+          value={breakfastOn(menu, picks, date)}
           onChange={set('breakfast')}
-          groups={[{ names: menu.breakfasts }]}
+          groups={[{ names: names(menu.breakfasts) }]}
         />
       </MealRow>
       <MealRow label="Snack">
         <MealPicker
-          value={day.snack ?? defaultIdea(menu.snacks, date)}
+          value={snackOn(menu, picks, date)}
           onChange={set('snack')}
-          groups={[{ names: menu.snacks }]}
+          groups={[{ names: names(menu.snacks) }]}
         />
       </MealRow>
     </>

@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useLocalStorage } from '../hooks/useLocalStorage.js'
 import { buildShoppingList } from '../lib/shopping.js'
+import { SKIP, weekDishes } from '../lib/mealPlan.js'
 import { addDays, formatDay, isoDate, parseIsoDate, startOfWeek } from '../lib/dates.js'
 
 // Three steps, one saved object:
 //   null                         -> Generate: pick a week, build the list
 //   { stage: 'review', ... }     -> Review: untick what you already have
 //   { stage: 'shopping', ... }   -> Shopping: tick things off in the shop
-export default function ShopPage({ menu, plans }) {
+export default function ShopPage({ menu, plans, picks }) {
   const [list, setList] = useLocalStorage('daytoday.shoppingList', null)
 
   // Flip one true/false field on one item. A function update, as in App.jsx.
@@ -19,19 +20,20 @@ export default function ShopPage({ menu, plans }) {
   }
 
   // Early returns pick which screen to show, like a switch statement.
-  if (!list) return <Generate menu={menu} plans={plans} onCreate={setList} />
+  if (!list) return <Generate menu={menu} plans={plans} picks={picks} onCreate={setList} />
   if (list.stage === 'review') return <Review list={list} setList={setList} toggle={toggle} />
   return <Shopping list={list} setList={setList} toggle={toggle} />
 }
 
-function Generate({ menu, plans, onCreate }) {
+function Generate({ menu, plans, picks, onCreate }) {
   const [weekOffset, setWeekOffset] = useState(0)
   const monday = startOfWeek(addDays(new Date(), weekOffset * 7))
   const weekPlan = plans[isoDate(monday)] ?? {}
-  const dinners = Object.values(weekPlan)
+  const dinners = Object.values(weekPlan).filter(name => name !== SKIP)
 
   function generate() {
-    onCreate({ stage: 'review', week: isoDate(monday), items: buildShoppingList(menu, weekPlan) })
+    const dishes = weekDishes(menu, plans, picks, monday)
+    onCreate({ stage: 'review', week: isoDate(monday), items: buildShoppingList(menu, dishes) })
   }
 
   return (
@@ -56,9 +58,10 @@ function Generate({ menu, plans, onCreate }) {
             {dinners.map(name => <li key={name}>{name}</li>)}
           </ul>
         )}
+        <p className="hint">Plus 7 breakfasts and 7 snacks, as picked in the Week tab.</p>
       </section>
 
-      <button className="primary wide" disabled={dinners.length === 0} onClick={generate}>
+      <button className="primary wide" onClick={generate}>
         🛒 Generate shopping list
       </button>
     </>
@@ -67,10 +70,16 @@ function Generate({ menu, plans, onCreate }) {
 
 function Review({ list, setList, toggle }) {
   const kept = list.items.filter(i => i.keep).length
+  const needed = list.items.filter(i => !i.staple)
+  const staples = list.items.filter(i => i.staple)
 
   function save() {
     setList({ ...list, stage: 'shopping', items: list.items.filter(i => i.keep) })
   }
+
+  const renderItem = item => (
+    <ShopItem key={item.key} item={item} checked={item.keep} onToggle={() => toggle(item.key, 'keep')} showMeals />
+  )
 
   return (
     <>
@@ -84,11 +93,15 @@ function Review({ list, setList, toggle }) {
         <button className="primary" onClick={save}>Save list ({kept})</button>
       </div>
 
-      <ul className="shop-list">
-        {list.items.map(item => (
-          <ShopItem key={item.key} item={item} checked={item.keep} onToggle={() => toggle(item.key, 'keep')} showMeals />
-        ))}
-      </ul>
+      <ul className="shop-list">{needed.map(renderItem)}</ul>
+
+      {staples.length > 0 && (
+        <>
+          <h2 className="shop-section">Usually in the cupboard</h2>
+          <p className="hint">Unticked to start with. Tick anything you’ve run out of.</p>
+          <ul className="shop-list">{staples.map(renderItem)}</ul>
+        </>
+      )}
     </>
   )
 }

@@ -41,7 +41,7 @@ export default function App() {
       <main className="app">
         {tab === 'today' && <TodayPage {...mealProps} onPlanWeek={() => setTab('week')} />}
         {tab === 'week' && <WeekPage {...mealProps} setPlans={setPlans} />}
-        {tab === 'shop' && <ShopPage menu={menu} plans={plans} />}
+        {tab === 'shop' && <ShopPage menu={menu} plans={plans} picks={picks} />}
         {tab === 'todos' && <TodosPage />}
       </main>
 

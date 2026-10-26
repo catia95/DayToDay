@@ -1,19 +1,18 @@
-import { findMeal } from './mealPlan.js'
 import { formatQty } from './quantities.js'
 
 // kg and l are stored as g and ml so they add up with each other.
 const TO_BASE = { kg: ['g', 1000], l: ['ml', 1000] }
 
-// One combined list for a week's dinners: the same item across meals becomes
-// one line with its quantities added up, e.g. 3 meals x 1 onion -> "Onion 3".
+// One combined list for a week's dishes (from weekDishes): the same item across
+// dishes becomes one line with its quantities added up, e.g. 3 x 1 onion -> "Onion 3".
+// A dish eaten on several days counts each time.
 // Different units can't be added ("1 tin" + "250g"), so they're shown side by side.
-export function buildShoppingList(menu, weekPlan) {
+export function buildShoppingList(menu, dishes) {
   // A Map keeps keys in the order they were added, like Java's LinkedHashMap.
   const byItem = new Map()
 
-  for (const mealName of Object.values(weekPlan)) {
-    const meal = findMeal(menu, mealName)
-    for (const ing of meal?.ingredients ?? []) {
+  for (const meal of dishes) {
+    for (const ing of meal.ingredients ?? []) {
       const key = ing.item.toLowerCase()
       const entry = byItem.get(key) ?? { key, name: ing.item, totals: {}, meals: [] }
 
@@ -31,8 +30,14 @@ export function buildShoppingList(menu, weekPlan) {
     }
   }
 
+  // A Set is like Java's HashSet: fast "is this in it?" checks.
+  const staples = new Set(menu.staples.map(s => s.toLowerCase()))
+
   return [...byItem.values()]
-    .map(({ key, name, totals, meals }) => ({ key, name, meals, amount: formatTotals(totals), keep: true, got: false }))
+    .map(({ key, name, totals, meals }) => {
+      const staple = staples.has(key)
+      return { key, name, meals, amount: formatTotals(totals), staple, keep: !staple, got: false }
+    })
     .sort((a, b) => a.name.localeCompare(b.name))
 }
 

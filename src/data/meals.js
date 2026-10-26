@@ -532,27 +532,131 @@ export const themes = [
   // No Saturday / Sunday entries = freestyle weekends.
 ]
 
+// Breakfasts and snacks: quantities are for ONE DAY for both of you (2 portions).
+// Reuse ingredient names from the dinners (Milk, Eggs, Cheddar…) so the
+// shopping list adds them together.
 export const breakfasts = [
-  'Cereal',
-  'Toast',
-  'Pastries',
-  'Avocado toast',
-  'Porridge & fruit',
-  'Granola, fruit & yoghurt',
-  'Scrambled egg on toast',
-  'Scrambled egg & salmon on toast',
-  'Pancakes & fruit',
+  {
+    name: 'Cereal',
+    ingredients: [
+      { item: 'Cereal', qty: 80, unit: 'g' },
+      { item: 'Milk', qty: 300, unit: 'ml' },
+    ],
+  },
+  {
+    name: 'Toast',
+    ingredients: [
+      { item: 'Bread', qty: 4, unit: 'slice' },
+      { item: 'Butter', qty: 20, unit: 'g' },
+    ],
+  },
+  {
+    name: 'Pastries',
+    ingredients: [
+      { item: 'Croissants', qty: 2 },
+    ],
+  },
+  {
+    name: 'Avocado toast',
+    ingredients: [
+      { item: 'Bread', qty: 4, unit: 'slice' },
+      { item: 'Avocados', qty: 1 },
+      { item: 'Lemon', qty: 1 },
+    ],
+  },
+  {
+    name: 'Porridge & fruit',
+    ingredients: [
+      { item: 'Porridge oats', qty: 100, unit: 'g' },
+      { item: 'Milk', qty: 500, unit: 'ml' },
+      { item: 'Berries', qty: 150, unit: 'g' },
+    ],
+  },
+  {
+    name: 'Granola, fruit & yoghurt',
+    ingredients: [
+      { item: 'Granola', qty: 100, unit: 'g' },
+      { item: 'Greek yoghurt', qty: 300, unit: 'g' },
+      { item: 'Berries', qty: 150, unit: 'g' },
+    ],
+  },
+  {
+    name: 'Scrambled egg on toast',
+    ingredients: [
+      { item: 'Eggs', qty: 4 },
+      { item: 'Bread', qty: 4, unit: 'slice' },
+      { item: 'Butter', qty: 20, unit: 'g' },
+    ],
+  },
+  {
+    name: 'Scrambled egg & salmon on toast',
+    ingredients: [
+      { item: 'Eggs', qty: 4 },
+      { item: 'Smoked salmon', qty: 100, unit: 'g' },
+      { item: 'Bread', qty: 4, unit: 'slice' },
+    ],
+  },
+  {
+    name: 'Pancakes & fruit',
+    ingredients: [
+      { item: 'Plain flour', qty: 100, unit: 'g' },
+      { item: 'Eggs', qty: 2 },
+      { item: 'Milk', qty: 250, unit: 'ml' },
+      { item: 'Bananas', qty: 2 },
+    ],
+  },
 ]
 
 // Starter ideas, fruit first. Swap in your own.
 export const snacks = [
-  'Apple & peanut butter',
-  'Banana',
-  'Grapes & a few nuts',
-  'Satsumas',
-  'Berries & yoghurt',
-  'Pear & cheese',
-  'Carrot & cucumber sticks with hummus',
+  {
+    name: 'Apple & peanut butter',
+    ingredients: [
+      { item: 'Apples', qty: 2 },
+      { item: 'Peanut butter', qty: 2, unit: 'tbsp' },
+    ],
+  },
+  {
+    name: 'Banana',
+    ingredients: [
+      { item: 'Bananas', qty: 2 },
+    ],
+  },
+  {
+    name: 'Grapes & a few nuts',
+    ingredients: [
+      { item: 'Grapes', qty: 200, unit: 'g' },
+      { item: 'Mixed nuts', qty: 50, unit: 'g' },
+    ],
+  },
+  {
+    name: 'Satsumas',
+    ingredients: [
+      { item: 'Satsumas', qty: 4 },
+    ],
+  },
+  {
+    name: 'Berries & yoghurt',
+    ingredients: [
+      { item: 'Berries', qty: 150, unit: 'g' },
+      { item: 'Greek yoghurt', qty: 200, unit: 'g' },
+    ],
+  },
+  {
+    name: 'Pear & cheese',
+    ingredients: [
+      { item: 'Pears', qty: 2 },
+      { item: 'Cheddar', qty: 60, unit: 'g' },
+    ],
+  },
+  {
+    name: 'Carrot & cucumber sticks with hummus',
+    ingredients: [
+      { item: 'Carrot', qty: 2 },
+      { item: 'Cucumber', qty: 1 },
+      { item: 'Hummus', qty: 1, unit: 'pot' },
+    ],
+  },
 ]
 
 // To choose from when there are no leftovers from the night before.
@@ -569,6 +673,33 @@ export const weekendLunches = [
   'Roast',
   'Stew',
   'Soup',
+]
+
+// Things you usually have in: they start unticked on a new shopping list
+// (tick them back on if you've run out). Names must match the ingredient
+// names above; capitals don't matter.
+export const staples = [
+  // Dried
+  'Spaghetti',
+  'Linguine',
+  'Pasta',
+  'Macaroni',
+  'Lasagne sheets',
+  'Rice',
+  'Risotto rice',
+  'Ramen noodles',
+  'Egg noodles',
+  'Plain flour',
+  'Breadcrumbs',
+  // Basics
+  'Onion',
+  'Garlic',
+  // Jars, sauces & spices
+  'Mayonnaise',
+  'Soy sauce',
+  'Chilli powder',
+  'Gravy granules',
+  'Peanut butter',
 ]
 
 export const FRUIT_GOAL = 5

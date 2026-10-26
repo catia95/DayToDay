@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import DayMeals, { MealRow } from '../components/DayMeals.jsx'
 import Ingredients from '../components/Ingredients.jsx'
-import { findMeal, shuffled, suggestWeek, themeFor } from '../lib/mealPlan.js'
+import { SKIP, findMeal, names, shuffled, suggestWeek, themeFor } from '../lib/mealPlan.js'
 import { WEEK, addDays, formatDay, isoDate, startOfWeek } from '../lib/dates.js'
 
 export default function WeekPage({ menu, plans, setPlans, picks, setPick }) {
@@ -21,7 +21,8 @@ export default function WeekPage({ menu, plans, setPlans, picks, setPick }) {
   const days = WEEK.map((day, i) => ({ day, date: addDays(monday, i), theme: themeFor(menu, day) }))
   const unplanned = days.filter(d => d.theme && !plan[d.day]).length
 
-  // "Fill in" keeps anything you've picked; "Shuffle" redoes the whole week.
+  // "Fill in" keeps anything you've picked or skipped; "Shuffle" redoes the
+  // whole week, clearing skips too.
   function suggest() {
     const fillOnly = unplanned > 0
 
@@ -30,12 +31,13 @@ export default function WeekPage({ menu, plans, setPlans, picks, setPick }) {
     const suggestion = suggestWeek(menu, lastWeek)
     setPlan(fillOnly ? { ...suggestion, ...plan } : suggestion)
 
-    const breakfasts = shuffled(menu.breakfasts)
-    const snacks = shuffled(menu.snacks)
+    const breakfasts = shuffled(names(menu.breakfasts))
+    const snacks = shuffled(names(menu.snacks))
     days.forEach(({ date }, i) => {
       const iso = isoDate(date)
       if (!fillOnly || !picks[iso]?.breakfast) setPick(iso, 'breakfast', breakfasts[i % breakfasts.length])
       if (!fillOnly || !picks[iso]?.snack) setPick(iso, 'snack', snacks[i % snacks.length])
+      if (!fillOnly && picks[iso]?.lunch === SKIP) setPick(iso, 'lunch', '')
     })
   }
 
@@ -77,13 +79,18 @@ export default function WeekPage({ menu, plans, setPlans, picks, setPick }) {
             <div className="meal-rows">
               {theme && (
                 <MealRow label="Dinner">
-                  <select value={plan[day] ?? ''} onChange={e => choose(day, e.target.value)}>
+                  <select
+                    value={plan[day] ?? ''}
+                    onChange={e => choose(day, e.target.value)}
+                    className={plan[day] === SKIP ? 'skipped' : ''}
+                  >
                     <option value="">Pick a dinner…</option>
                     {theme.meals.map(m => (
                       <option key={m.name} value={m.name}>
                         {m.name}{m.leftovers ? ' 🍱' : ''}
                       </option>
                     ))}
+                    <option value={SKIP}>Skip (away)</option>
                   </select>
                   <Ingredients meal={findMeal(menu, plan[day])} servings={menu.servings} />
                 </MealRow>

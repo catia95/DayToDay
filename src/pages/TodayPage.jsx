@@ -1,6 +1,6 @@
 import DayMeals, { MealRow } from '../components/DayMeals.jsx'
 import Ingredients from '../components/Ingredients.jsx'
-import { dinnerOn, findMeal, themeFor } from '../lib/mealPlan.js'
+import { SKIP, dinnerOn, findMeal, themeFor } from '../lib/mealPlan.js'
 import { dayKey, formatDay, isoDate } from '../lib/dates.js'
 
 export default function TodayPage({ menu, plans, picks, setPick, onPlanWeek }) {
@@ -21,7 +21,9 @@ export default function TodayPage({ menu, plans, picks, setPick, onPlanWeek }) {
 
       <section className="card meal-rows">
         <MealRow label="Tonight">
-          {dinner ? (
+          {dinner === SKIP ? (
+            <span className="hint">Skipped: away</span>
+          ) : dinner ? (
             <>
               {dinner}
               {meal?.leftovers && <span className="tag">makes lunch</span>}

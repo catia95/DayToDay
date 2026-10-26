@@ -154,3 +154,5 @@ button.wide { width: 100%; padding: 12px; margin-top: 16px; }
 .shop-list .qty { color: var(--muted); white-space: nowrap; font-size: 0.9rem; }
 .shop-list li.off { opacity: 0.45; }
 .struck { text-decoration: line-through; }
+select.skipped { color: var(--muted); font-style: italic; }
+.shop-section { margin: 20px 0 0; font-size: 1rem; }
