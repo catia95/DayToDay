@@ -1,65 +1,62 @@
+import { useState } from 'react'
 import { useLocalStorage } from './hooks/useLocalStorage.js'
-import AddTodo from './components/AddTodo.jsx'
-import TodoList from './components/TodoList.jsx'
+import { useMenu } from './data/useMenu.js'
+import TodayPage from './pages/TodayPage.jsx'
+import WeekPage from './pages/WeekPage.jsx'
+import ShopPage from './pages/ShopPage.jsx'
+import TodosPage from './pages/TodosPage.jsx'
 
-// A component is just a function that returns UI (JSX).
-// React calls it again every time its state changes — it's a re-render, not
-// a mutation of existing objects. Think "pure function: state -> UI".
+const TABS = [
+  { id: 'today', label: 'Today', icon: '☀️' },
+  { id: 'week', label: 'Week', icon: '🍽️' },
+  { id: 'shop', label: 'Shop', icon: '🛒' },
+  { id: 'todos', label: 'Todos', icon: '✓' },
+]
+
+// App is now just the shell: which tab is showing, plus any state that more
+// than one page needs. Meal data is read by Today AND edited by Week, so it
+// lives here and gets passed down ("lifting state up" again).
 export default function App() {
-  // State lives here, in the top-most component that needs it ("lifting state up").
-  // Children get data via props and report changes back via callback props.
-  const [todos, setTodos] = useLocalStorage('daytoday.todos', [])
+  const [tab, setTab] = useState('today')
+  const menu = useMenu()
+  const [plans, setPlans] = useLocalStorage('daytoday.mealPlans', {})
+  // Everything chosen for a single day, by date:
+  //   { '2026-10-27': { lunch: 'Soup', breakfast: 'Toast', snack: 'Banana', fruit: 3 } }
+  // Kept apart from the dinner plan so shuffling dinners doesn't wipe them.
+  const [picks, setPicks] = useLocalStorage('daytoday.dayPicks', {})
 
-  // ⚠️ Never mutate state (no todos.push(...)). Always build a NEW array/object.
-  // React compares references (like Java ==, not .equals) to decide what changed.
-  // `...todos` is the spread operator: copy all elements into the new array.
-  function addTodo(text, bucket) {
-    const todo = { id: crypto.randomUUID(), text, bucket, done: false, createdAt: Date.now() }
-    setTodos([todo, ...todos])
+  // ⚠️ Pass a function, not a new object. `picks` here is a snapshot from the
+  // last render, so calling setPick several times in a row (e.g. shuffling a
+  // whole week) would have each call overwrite the previous one. Given a
+  // function, React hands it the latest value each time, so updates stack up.
+  function setPick(date, key, value) {
+    setPicks(prev => ({ ...prev, [date]: { ...prev[date], [key]: value } }))
   }
 
-  function toggleTodo(id) {
-    // `{ ...t, done: !t.done }` = copy of t with one field overridden.
-    setTodos(todos.map(t => (t.id === id ? { ...t, done: !t.done } : t)))
-  }
+  const mealProps = { menu, plans, picks, setPick }
 
-  function deleteTodo(id) {
-    setTodos(todos.filter(t => t.id !== id))
-  }
-
-  function moveTodo(id) {
-    setTodos(todos.map(t =>
-      t.id === id ? { ...t, bucket: t.bucket === 'core' ? 'someday' : 'core' } : t,
-    ))
-  }
-
-  const core = todos.filter(t => t.bucket === 'core')
-  const someday = todos.filter(t => t.bucket === 'someday')
-  const actions = { onToggle: toggleTodo, onDelete: deleteTodo, onMove: moveTodo }
-
-  // JSX: HTML-like syntax that compiles to function calls.
-  // Differences from HTML: `className` not `class`, `{expr}` embeds any JS expression.
   return (
-    <main className="app">
-      <header>
-        <h1>DayToDay</h1>
-        <p className="tagline">Finish things, not start them.</p>
-      </header>
+    <>
+      {/* <>...</> is a Fragment: groups elements without adding an extra <div>. */}
+      <main className="app">
+        {tab === 'today' && <TodayPage {...mealProps} onPlanWeek={() => setTab('week')} />}
+        {tab === 'week' && <WeekPage {...mealProps} setPlans={setPlans} />}
+        {tab === 'shop' && <ShopPage menu={menu} plans={plans} />}
+        {tab === 'todos' && <TodosPage />}
+      </main>
 
-      <AddTodo onAdd={addTodo} />
-
-      <TodoList
-        title="Core"
-        hint="Real consequences if missed: fines, renewals, deadlines."
-        todos={core}
-        {...actions}
-      />
-      <TodoList
-        title="When free"
-        hint="Nice-to-haves. Keep this short."
-        todos={someday}
-        {...actions}
-      />
-    </main>
+      <nav className="tabs">
+        {TABS.map(t => (
+          <button
+            key={t.id}
+            className={tab === t.id ? 'active' : ''}
+            onClick={() => setTab(t.id)}
+          >
+            <span aria-hidden="true">{t.icon}</span>
+            {t.label}
+          </button>
+        ))}
+      </nav>
+    </>
   )
 }

@@ -65,3 +65,92 @@ ul { list-style: none; margin: 0; padding: 0; }
 .todo label { flex: 1; display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .todo input { width: 18px; height: 18px; accent-color: var(--accent); }
 .todo.done span { text-decoration: line-through; color: var(--muted); }
+
+/* ---------- Tabs ---------- */
+.app { padding-bottom: calc(env(safe-area-inset-bottom) + 96px); }
+.tabs {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 16px calc(env(safe-area-inset-bottom) + 8px);
+  background: var(--card);
+  border-top: 1px solid var(--line);
+}
+.tabs button {
+  flex: 1;
+  max-width: 120px;
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.tabs button span { font-size: 1.2rem; }
+.tabs button.active { background: var(--line); color: var(--text); }
+
+/* ---------- Meals (Today + Week) ---------- */
+.card { background: var(--card); border-radius: 10px; padding: 12px 14px; }
+.meal-rows { display: flex; flex-direction: column; gap: 10px; }
+section.meal-rows { margin-bottom: 24px; }
+.meal-row { display: flex; align-items: center; gap: 12px; min-height: 36px; }
+.meal-row-label { width: 76px; flex-shrink: 0; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.meal-row-value { flex: 1; min-width: 0; }
+.meal-row select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+.tag { margin-left: 8px; font-size: 0.75rem; color: var(--accent); white-space: nowrap; }
+button.link { border: none; padding: 0; color: var(--accent); text-align: left; }
+
+.fruit h2 { margin: 0 0 10px; font-size: 1.15rem; display: flex; align-items: center; gap: 8px; }
+.fruit-slots { display: flex; gap: 8px; }
+.fruit-slots button {
+  width: 48px; height: 48px;
+  padding: 0;
+  border-radius: 12px;
+  border: 2px dashed var(--line);
+  font-size: 1.5rem;
+}
+.fruit-slots button.filled { border-style: solid; border-color: var(--accent); background: var(--card); }
+
+/* ---------- Week ---------- */
+header .bucket-picker { margin-top: 12px; }
+.week-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin: 16px 0 12px; }
+.week-actions .hint { margin: 0; }
+.week { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.day-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.day-head .hint { margin: 0; }
+
+/* ---------- Ingredients ---------- */
+.ingredients { margin-top: 6px; font-size: 0.85rem; }
+.ingredients summary { color: var(--accent); cursor: pointer; }
+.ingredients ul { margin: 6px 0 0; }
+.ingredients li { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-bottom: 1px solid var(--line); }
+.ingredients li:last-child { border-bottom: none; }
+.ingredients .qty { color: var(--muted); white-space: nowrap; }
+
+/* ---------- Shopping ---------- */
+button:disabled { opacity: 0.4; cursor: default; }
+button.wide { width: 100%; padding: 12px; margin-top: 16px; }
+.shop-dinners ul { margin: 0; padding-left: 18px; list-style: disc; }
+.shop-dinners li { padding: 3px 0; }
+.shop-actions { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+.shop-list li { background: var(--card); border-radius: 10px; margin-bottom: 6px; }
+.shop-list label { display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; }
+.shop-list input { width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--accent); }
+.shop-name { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.shop-name small { color: var(--muted); font-size: 0.75rem; }
+.shop-list .qty { color: var(--muted); white-space: nowrap; font-size: 0.9rem; }
+.shop-list li.off { opacity: 0.45; }
+.struck { text-decoration: line-through; }
